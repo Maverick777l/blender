@@ -1,8 +1,8 @@
 {
   "name": "Escriptori Nube (KDE + Blender + Chrome)",
   "postCreateCommand": "bash .devcontainer/setup.sh",
-  "postStartCommand": "rm -rf /tmp/.X* && vncserver :1 -select-de manual -select-de manual -interface 0.0.0.0 -websocketPort 6080",
-  "forwardPorts": [6080],
+  "postStartCommand": "rm -rf /tmp/.X* && nohup vncserver :1 -select-de manual -interface 0.0.0.0 -websocketPort 6080 >/tmp/vnc.log 2>&1 & sleep 2",
+  "forwardPorts":,
   "portsAttributes": {
     "6080": {
       "label": "Escriptori Virtual",
