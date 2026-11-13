@@ -1,0 +1,4 @@
+{
+  "postStartCommand": "vncserver :1 -interface 0.0.0.0 -websocketPort 6080",
+  "forwardPorts": [6080]
+}
