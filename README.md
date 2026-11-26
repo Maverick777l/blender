@@ -9,7 +9,7 @@ Executa un sistema operatiu complet amb **Blender** i **Google Chrome** directam
 ## 🚀 Com funciona (100% Automàtic)
 
 1. **Prem el botó de dalt** i selecciona **Create codespace** per crear un escriptori nou. Cal iniciar sessió a GitHub i tenir quota de Codespaces disponible.
-2. **Espera uns 4 minuts** mentre el servidor instal·la i configura automàticament tot l'entorn.
+2. **Espera uns 5-8 minuts** la primera vegada mentre el servidor instal·la i configura automàticament tot l'entorn.
 3. S'obrirà automàticament una pestanya nova amb l'escriptori virtual (si no s'obre sola, ves a la pestanya inferior **PORTS**, busca el port **6080** i prem la icona del globus terraquì 🌐).
 
 ---
@@ -30,12 +30,19 @@ NEW_PASSWORD="$(openssl rand -hex 16)"
 printf '%s\n' "$NEW_PASSWORD" > ~/.vnc/password
 chmod 600 ~/.vnc/password
 printf '%s\n%s\n' "$NEW_PASSWORD" "$NEW_PASSWORD" | vncpasswd -u admin -w -r
-vncserver -kill :1
-vncserver :1 -select-de manual -interface 0.0.0.0 -websocketPort 6080
+bash .devcontainer/start-vnc.sh
 cat ~/.vnc/password
 ```
 
 Després d'uns quants intents fallits, KasmVNC pot bloquejar temporalment la IP; espera uns segons després de restablir-la abans de tornar a iniciar sessió.
+
+---
+
+## 🛠️ Si l'escriptori no apareix
+
+Obre el terminal del Codespace i executa `bash .devcontainer/start-vnc.sh`. Si encara falla, mira el registre amb `cat /tmp/vnc.log` i `tail -n 50 ~/.vnc/*.log`.
+
+Si el Codespace es va crear abans d'aquest arreglament, esborra'l a https://github.com/codespaces i crea'n un de nou amb el botó (el botó reobre el Codespace antic si ja n'hi ha un).
 
 ---
 
