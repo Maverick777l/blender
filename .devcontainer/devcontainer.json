@@ -10,8 +10,14 @@
     "storage": "32gb"
   },
   "runArgs": ["--shm-size=2g"],
+  "secrets": {
+    "VNC_PASSWORD": {
+      "description": "OPCIONAL. Deixa-ho buit per entrar a l'escriptori sense contrasenya (només tu hi pots accedir amb el teu compte de GitHub). Si poses una contrasenya, KasmVNC la demanarà amb l'usuari 'admin'."
+    }
+  },
   "onCreateCommand": "bash .devcontainer/setup.sh",
   "postStartCommand": "bash .devcontainer/start-vnc.sh",
+  "postAttachCommand": "bash .devcontainer/info.sh",
   "waitFor": "postStartCommand",
   "forwardPorts": [6080],
   "portsAttributes": {
@@ -19,6 +25,14 @@
       "label": "Escriptori Virtual",
       "protocol": "http",
       "onAutoForward": "openBrowser"
+    }
+  },
+  "otherPortsAttributes": {
+    "onAutoForward": "silent"
+  },
+  "customizations": {
+    "codespaces": {
+      "openFiles": ["README.md"]
     }
   }
 }

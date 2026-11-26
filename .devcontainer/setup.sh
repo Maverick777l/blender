@@ -8,6 +8,9 @@ sudo -E apt-get install -y \
   kde-plasma-desktop konsole dolphin dbus-x11 x11-xserver-utils \
   blender ssl-cert openssl curl ca-certificates fonts-dejavu
 
+# Idioma espanyol per a KDE (opcional: si falla, l'escriptori surt en anglès).
+sudo -E apt-get install -y language-pack-es language-pack-kde-es || true
+
 # KasmVNC: el paquet ha de coincidir amb la versió d'Ubuntu del contenidor (noble).
 KASM_URL="$(curl -fsSL https://api.github.com/repos/kasmtech/KasmVNC/releases/latest \
   | grep -o 'https://[^"]*noble[^"]*_amd64\.deb' | head -n1)"
@@ -26,12 +29,9 @@ sudo sed -i 's|Exec=/usr/bin/google-chrome-stable|Exec=/usr/bin/google-chrome-st
   /usr/share/applications/google-chrome.desktop
 
 mkdir -p "$HOME/.vnc"
-if [ ! -s "$HOME/.vnc/password" ]; then
-  openssl rand -hex 16 > "$HOME/.vnc/password"
-fi
-chmod 600 "$HOME/.vnc/password"
-VNC_PASSWORD="$(cat "$HOME/.vnc/password")"
-printf '%s\n%s\n' "$VNC_PASSWORD" "$VNC_PASSWORD" | vncpasswd -u admin -w -r
+# Usuari intern de KasmVNC (vncserver el necessita encara que no es demani contrasenya).
+INTERNAL_PASSWORD="$(openssl rand -hex 16)"
+printf '%s\n%s\n' "$INTERNAL_PASSWORD" "$INTERNAL_PASSWORD" | vncpasswd -u admin -w -r
 
 openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
   -keyout "$HOME/.vnc/self.pem" -out "$HOME/.vnc/self.pem" -subj "/CN=localhost" 2>/dev/null
@@ -65,6 +65,10 @@ export LIBGL_ALWAYS_SOFTWARE=1
 export GALLIUM_DRIVER=llvmpipe
 export LP_NUM_THREADS="$(nproc)"
 export KWIN_COMPOSE=N
+if locale -a 2>/dev/null | grep -qi '^es_ES.utf8$'; then
+  export LANG=es_ES.UTF-8 LANGUAGE=es:en LC_ALL=es_ES.UTF-8
+fi
+setxkbmap es 2>/dev/null || true
 exec dbus-launch --exit-with-session startplasma-x11
 XS
 chmod +x "$HOME/.vnc/xstartup"
@@ -73,5 +77,35 @@ kwriteconfig5 --file kscreenlockerrc --group Daemon --key Autolock false
 kwriteconfig5 --file kscreenlockerrc --group Daemon --key LockOnResume false
 kwriteconfig5 --file kwalletrc --group Wallet --key Enabled false
 kwriteconfig5 --file kwinrc --group Compositing --key Enabled false
+
+# Rendiment: sense animacions, sense indexador de fitxers ni pantalla de càrrega.
+kwriteconfig5 --file kdeglobals --group KDE --key AnimationDurationFactor 0
+kwriteconfig5 --file baloofilerc --group "Basic Settings" --key "Indexing-Enabled" false
+kwriteconfig5 --file ksplashrc --group KSplash --key Engine none
+kwriteconfig5 --file ksplashrc --group KSplash --key Theme None
+kwriteconfig5 --file ksmserverrc --group General --key loginMode emptySession
+
+# Teclat espanyol (amb anglès com a segona opció).
+kwriteconfig5 --file kxkbrc --group Layout --key Use true
+kwriteconfig5 --file kxkbrc --group Layout --key LayoutList es,us
+
+# Ordre 'escriptori' per reiniciar l'escriptori des de qualsevol terminal.
+sudo tee /usr/local/bin/escriptori >/dev/null <<CMD
+#!/bin/bash
+exec bash "$PWD/.devcontainer/start-vnc.sh" "\$@"
+CMD
+sudo chmod +x /usr/local/bin/escriptori
+
+# Accessos directes a l'escriptori de KDE.
+DESKTOP_DIR="$HOME/Desktop"
+mkdir -p "$DESKTOP_DIR"
+for app in blender google-chrome org.kde.konsole org.kde.dolphin; do
+  if [ -f "/usr/share/applications/$app.desktop" ]; then
+    cp "/usr/share/applications/$app.desktop" "$DESKTOP_DIR/"
+    chmod +x "$DESKTOP_DIR/$app.desktop"
+  fi
+done
+# Carpeta del repositori: el que hi guardis es pot pujar a GitHub.
+ln -sfn "$PWD" "$DESKTOP_DIR/Projecte"
 
 echo "Instal·lació completada."
