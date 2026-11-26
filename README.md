@@ -2,7 +2,7 @@
 
 Executa un sistema operatiu Linux complet amb **Blender** i **Google Chrome** directament al teu navegador mitjançant **GitHub Codespaces**. Funciona des de qualsevol ordinador (també Chromebooks i ordinadors amb restriccions): només cal un navegador.
 
-[![Crea un Codespace nou a GitHub](https://github.com/codespaces/badge.svg)](https://codespaces.new/arnlopgar-debug/blender?quickstart=1)
+[![Crea un Codespace nou a GitHub](https://github.com/codespaces/badge.svg)](https://codespaces.new/arnlopgar-debug/linux-web_98561?quickstart=1)
 
 ---
 
