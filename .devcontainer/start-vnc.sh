@@ -16,6 +16,12 @@ if [ -n "${VNC_PASSWORD:-}" ]; then
   AUTH_ARGS=""
 fi
 
+# Atura el vigilant anterior (si n'hi ha) abans de reiniciar.
+if [ -f /tmp/escriptori-vigilant.pid ]; then
+  kill "$(cat /tmp/escriptori-vigilant.pid)" 2>/dev/null || true
+  rm -f /tmp/escriptori-vigilant.pid
+fi
+
 vncserver -kill :1 >/dev/null 2>&1 || true
 rm -f /tmp/.X1-lock /tmp/.X11-unix/X1 2>/dev/null || true
 
@@ -26,6 +32,9 @@ setsid nohup sg ssl-cert -c "vncserver :1 -select-de manual -geometry 1600x900 -
 for _ in $(seq 1 60); do
   if curl -fsS --max-time 2 -o /dev/null http://127.0.0.1:6080/ 2>/dev/null \
     || curl -kfsS --max-time 2 -o /dev/null https://127.0.0.1:6080/ 2>/dev/null; then
+    # Vigilant: si l'escriptori cau, el torna a arrencar sol.
+    setsid nohup bash "$(dirname "$0")/vigilant.sh" >/tmp/vigilant.log 2>&1 < /dev/null &
+    echo $! > /tmp/escriptori-vigilant.pid
     bash "$(dirname "$0")/info.sh"
     exit 0
   fi

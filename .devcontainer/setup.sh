@@ -69,6 +69,8 @@ if locale -a 2>/dev/null | grep -qi '^es_ES.utf8$'; then
   export LANG=es_ES.UTF-8 LANGUAGE=es:en LC_ALL=es_ES.UTF-8
 fi
 setxkbmap es 2>/dev/null || true
+# La pantalla no s'apaga mai ni surt l'estalvi de pantalla.
+xset s off s noblank -dpms 2>/dev/null || true
 exec dbus-launch --exit-with-session startplasma-x11
 XS
 chmod +x "$HOME/.vnc/xstartup"
@@ -107,5 +109,18 @@ for app in blender google-chrome org.kde.konsole org.kde.dolphin; do
 done
 # Carpeta del repositori: el que hi guardis es pot pujar a GitHub.
 ln -sfn "$PWD" "$DESKTOP_DIR/Projecte"
+
+# Google Chrome com a navegador per defecte.
+mkdir -p "$HOME/.config"
+cat > "$HOME/.config/mimeapps.list" <<'MIME'
+[Default Applications]
+x-scheme-handler/http=google-chrome.desktop
+x-scheme-handler/https=google-chrome.desktop
+text/html=google-chrome.desktop
+MIME
+
+# Sense gestió d'energia: l'escriptori no se suspèn ni apaga la pantalla.
+kwriteconfig5 --file powermanagementprofilesrc --group AC --group DPMSControl --key idleTime 0
+kwriteconfig5 --file powermanagementprofilesrc --group AC --group DimDisplay --key idleTime 0
 
 echo "Instal·lació completada."
