@@ -2,15 +2,36 @@
 # Instal·la KDE Plasma, Blender, Google Chrome i KasmVNC (Ubuntu 24.04 "noble").
 set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
+DIR="$(cd "$(dirname "$0")" && pwd)"
+TOTAL=6
 
-sudo apt-get update
+# Mostra el pas actual en gran i el desa perquè 'info.sh' el pugui ensenyar.
+pas() {
+  echo "$1/$TOTAL $2" > /tmp/escriptori-estat
+  echo
+  echo "=============================================================="
+  echo "  ⏳ [$1/$TOTAL] $2"
+  echo "=============================================================="
+}
+
+# Qualsevol terminal nou mostra l'estat i l'enllaç de l'escriptori.
+if ! grep -q "escriptori-info" "$HOME/.bashrc" 2>/dev/null; then
+  echo "bash \"$DIR/info.sh\"  # escriptori-info" >> "$HOME/.bashrc"
+fi
+
+pas 1 "Preparant la instal·lació (uns 5-8 minuts en total)"
+
+sudo apt-get update -q
+pas 2 "Instal·lant l'escriptori KDE i Blender (el pas més llarg)"
 sudo -E apt-get install -y \
   kde-plasma-desktop konsole dolphin dbus-x11 x11-xserver-utils \
   blender ssl-cert openssl curl ca-certificates fonts-dejavu
 
+pas 3 "Instal·lant l'idioma espanyol"
 # Idioma espanyol per a KDE (opcional: si falla, l'escriptori surt en anglès).
 sudo -E apt-get install -y language-pack-es language-pack-kde-es || true
 
+pas 4 "Descarregant i instal·lant KasmVNC i Google Chrome"
 # KasmVNC: el paquet ha de coincidir amb la versió d'Ubuntu del contenidor (noble).
 KASM_URL="$(curl -fsSL https://api.github.com/repos/kasmtech/KasmVNC/releases/latest \
   | grep -o 'https://[^"]*noble[^"]*_amd64\.deb' | head -n1)"
@@ -24,6 +45,7 @@ rm -f /tmp/kasm.deb /tmp/chrome.deb
 sudo apt-get clean
 sudo usermod -aG ssl-cert "$USER"
 
+pas 5 "Configurant l'escriptori"
 # Chrome dins d'un contenidor: sense sandbox i amb renderitzat per programari.
 sudo sed -i 's|Exec=/usr/bin/google-chrome-stable|Exec=/usr/bin/google-chrome-stable --no-sandbox --disable-dev-shm-usage --enable-webgl --ignore-gpu-blocklist --enable-unsafe-swiftshader|g' \
   /usr/share/applications/google-chrome.desktop
@@ -123,4 +145,6 @@ MIME
 kwriteconfig5 --file powermanagementprofilesrc --group AC --group DPMSControl --key idleTime 0
 kwriteconfig5 --file powermanagementprofilesrc --group AC --group DimDisplay --key idleTime 0
 
-echo "Instal·lació completada."
+pas 6 "Arrencant l'escriptori"
+rm -f /tmp/escriptori-estat
+echo "✅ Instal·lació completada."

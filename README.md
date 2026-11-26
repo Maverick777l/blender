@@ -10,11 +10,14 @@ Executa un sistema operatiu Linux complet amb **Blender** i **Google Chrome** di
 
 1. **Prem el botó de dalt** i selecciona **Create codespace**. Cal iniciar sessió a GitHub i tenir quota de Codespaces disponible.
 2. **Espera uns 5-8 minuts** la primera vegada mentre s'instal·la tot. Les vegades següents arrenca en pocs segons.
-3. S'obrirà una pestanya nova amb l'escriptori. **No cal cap contrasenya.**
+   - Pots seguir la instal·lació en directe al **terminal** de VS Code (pestanya `postCreateCommand`). Hi veuràs cada pas en gran: `⏳ [2/6] Instal·lant l'escriptori KDE i Blender...`
+   - Si obres un terminal nou mentre s'instal·la, també et diu en quin pas va.
+3. Quan acaba, s'obre una pestanya nova amb l'escriptori. **No cal cap contrasenya.**
+   - El primer cop KDE pot quedar-se uns segons amb la pantalla quieta mentre arrenca: és normal.
 
 Si la pestanya no s'obre sola, tens dues opcions:
 
-* Al **terminal** del Codespace apareix un requadre amb l'enllaç directe a l'escriptori: fes-hi clic.
+* Obre un **terminal** del Codespace: a dalt de tot sempre surt un requadre amb l'enllaç directe a l'escriptori i el seu estat (✅ a punt / ⏳ instal·lant / ⏳ arrencant).
 * O ves a la pestanya **PORTS**, busca el port **6080** (*Escriptori Virtual*) i prem la icona del globus 🌐.
 
 > ℹ️ El botó porta `?quickstart=1`: si ja tens un Codespace d'aquest repositori, el **reobre** en lloc de crear-ne un de nou.
@@ -49,7 +52,8 @@ Des de llavors KasmVNC demanarà l'usuari **`admin`** i aquesta contrasenya. La 
 | 📡 **KasmVNC** | Imatge comprimida al navegador, porta-retalls compartit (copiar i enganxar entre el teu ordinador i l'escriptori) i resolució que s'adapta a la mida de la finestra. |
 | 📁 **Accessos directes** | A l'escriptori hi trobaràs Blender, Google Chrome, Konsole (terminal), Dolphin (fitxers) i la carpeta **Projecte**. |
 | 🔄 **Vigilant automàtic** | Comprova cada 30 segons que l'escriptori respon. Si cau, el torna a arrencar sol. |
-| 🔗 **Enllaç al terminal** | Cada vegada que obres el terminal del Codespace es mostra l'enllaç directe a l'escriptori. |
+| 🔗 **Enllaç al terminal** | Cada terminal nou mostra a l'instant l'enllaç de l'escriptori i si està a punt, instal·lant-se o arrencant. |
+| 📊 **Progrés visible** | La instal·lació es veu pas a pas al terminal (`[1/6]` … `[6/6]`). |
 
 ---
 
@@ -81,6 +85,21 @@ Els canvis d'aquest repositori només s'apliquen als Codespaces **nous**. Si el 
 
 ---
 
+## 👥 Compartir-lo amb altres persones
+
+**La forma més fàcil: deixar el repositori públic.** Qualsevol persona pot prémer el botó i crear el seu propi Codespace:
+
+* Cadascú fa servir **la seva pròpia quota gratuïta** de Codespaces (cada compte personal en té cada mes). A tu no et costa res.
+* Cada Codespace és **independent i privat**: ningú pot entrar a l'escriptori d'un altre.
+* Ningú pot canviar el repositori sense el teu permís (només poden proposar canvis amb un *pull request*).
+
+**Si el poses privat**, hauràs d'invitar cada persona a *Settings → Collaborators*:
+
+* També funciona igual i cadascú gasta **la seva pròpia quota**, no la teva.
+* ⚠️ En un repositori d'un compte personal **no es pot donar només permís per crear Codespaces**: tot col·laborador rep permís d'**escriptura**, és a dir, pot modificar el codi del repositori. Per donar només permís de lectura cal crear una **organització** de GitHub (gratuïta) i posar-hi el repositori.
+
+---
+
 ## 💡 Consells
 
 * **Desa la feina a la carpeta _Projecte_** de l'escriptori: és aquest repositori, i el que hi guardis ho pots pujar a GitHub fent *commit*. La resta de fitxers es mantenen mentre no esborris el Codespace.
@@ -95,7 +114,7 @@ Els canvis d'aquest repositori només s'apliquen als Codespaces **nous**. Si el 
 | Fitxer | Què fa |
 | :--- | :--- |
 | `.devcontainer/devcontainer.json` | Defineix el Codespace: Ubuntu 24.04, 2 GB de memòria compartida (perquè Chrome no es pengi), el port 6080 i el secret opcional `VNC_PASSWORD`. |
-| `.devcontainer/setup.sh` | S'executa **un cop**, en crear el Codespace: instal·la KDE, Blender, Chrome i KasmVNC i ho configura tot. |
+| `.devcontainer/setup.sh` | S'executa **un cop**, en crear el Codespace (es veu al terminal): instal·la KDE, Blender, Chrome i KasmVNC i ho configura tot. |
 | `.devcontainer/start-vnc.sh` | S'executa **cada cop** que s'engega el Codespace (i amb l'ordre `escriptori`): arrenca l'escriptori i el vigilant. |
 | `.devcontainer/vigilant.sh` | Reinicia l'escriptori si deixa de respondre. |
-| `.devcontainer/info.sh` | Mostra l'enllaç de l'escriptori al terminal. |
+| `.devcontainer/info.sh` | Mostra l'enllaç i l'estat de l'escriptori a cada terminal nou. |

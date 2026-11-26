@@ -10,6 +10,8 @@ if ! command -v vncserver >/dev/null 2>&1; then
   exit 1
 fi
 
+echo "🖥️  Arrencant l'escriptori... (uns segons)"
+
 AUTH_ARGS="-disableBasicAuth"
 if [ -n "${VNC_PASSWORD:-}" ]; then
   printf '%s\n%s\n' "$VNC_PASSWORD" "$VNC_PASSWORD" | vncpasswd -u admin -w -r >/dev/null
